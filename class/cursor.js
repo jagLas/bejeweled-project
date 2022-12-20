@@ -12,6 +12,9 @@ class Cursor {
     this.gridColor = 'black';
     this.cursorColor = 'yellow';
 
+    this.selection1 = null;
+    this.selection2 = null;
+
   }
 
   resetBackgroundColor() {
@@ -23,22 +26,70 @@ class Cursor {
   }
 
   up() {
-    // Move cursor up
+    if (this.row > 0) {
+      this.resetBackgroundColor();
+      this.row -= 1;
+      this.setBackgroundColor();
+      Screen.render();
+    }   
   }
 
   down() {
-    // Move cursor down
+    if (this.row < this.numRows - 1 ) {
+      this.resetBackgroundColor();
+      this.row += 1;    
+      this.setBackgroundColor();
+      Screen.render();
+    }
   }
 
   left() {
-    // Move cursor left
+    if (this.col > 0) {
+      this.resetBackgroundColor();
+      this.col -= 1;
+      this.setBackgroundColor();
+      Screen.render()
+    }
   }
 
   right() {
-    // Move cursor right
+    if (this.col < this.numCols - 1) {
+      this.resetBackgroundColor();
+      this.col += 1;
+      this.setBackgroundColor();
+      Screen.render();
+    }
   }
 
+  select() {
+    if (this.selection1 === null) {
+      this.selection1 = {};
+      this.selection1.row = this.row;
+      this.selection1.col = this.col;
+
+    } else if(false) {
+
+    } else {
+      this.selection2 = {};
+      this.selection2.row = this.row;
+      this.selection2.col = this.col;
+    }
+
+
+  }
 }
+
+// cursor = new Cursor(3, 3);
+// debugger
+// cursor.select();
+// console.log(cursor.selection1)
+
+// cursor.right();
+// console.log(cursor)
+// cursor.select();
+
+// console.log(cursor.selection2)
+
 
 
 module.exports = Cursor;

@@ -66,16 +66,20 @@ describe ('Cursor', function () {
   });
 
   describe('Should swap symbols to make matches', function (){
-    it('should have properties for selection1 and selection2 set to null', function (){
-      expect(cursor.selection1).to.be(null);
-      expect(cursor.selection2).to.be(null);
+    it('should have properties for selection1 and selection2 set to empty object', function (){
+      
+      expect(cursor.selection1).to.be.null;
+      expect(cursor.selection1).to.be.null;
+      expect(cursor.selection2).to.be.null;
+      expect(cursor.selection2).to.be.null;
     })
 
     it('should be able to select first space and second space', function (){
       cursor.select();
-      expect([cursor.selection1.row, selection1.col]).to.equal([0,0]);
+      expect([cursor.selection1.row, cursor.selection1.col]).to.deep.equal([0, 0]);
       cursor.right();
-      expect([cursor.selection2.row, selection2.col]).to.equal([0,1]);
+      cursor.select();
+      expect([cursor.selection2.row, cursor.selection2.col]).to.deep.equal([0, 1]);
     })
 
     it('should not set a second selection if more than one space away', function (){
