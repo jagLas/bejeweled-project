@@ -1,11 +1,11 @@
 const { expect } = require('chai');
+const { checkForMatches } = require('../class/bejeweled.js');
 
 const Bejeweled = require("../class/bejeweled.js");
 
-
+const symbols = ['🍋' , '🥝', '🍓', '🥥', '🍇', '🍊', '🍒'];
 //seven different colors for initialization
 describe ('Bejeweled', function () {
-  const symbols = ['🍋' , '🥝', '🍓', '🥥', '🍇', '🍊', '🍒'];
 
   describe('Board Creation', function (){
     // Add tests for setting up a basic board
@@ -74,64 +74,111 @@ describe ('Bejeweled', function () {
       expect(findBlank(grid)).to.be.false;
 
     })
+
+    it('should not have any matches after filling', function(){
+      Bejeweled.shift(grid);
+      expect(checkForMatches(grid)).to.be.false;
+    })
   })
 
-
-
-  // Add tests for a valid swap that matches 3
-  it('should find matches horizontally of 3 or more', function(){
-    let grid = [
-      ['🍒', '🍋', '🥥'],
-      ['🥝', '🍋', '🍒'],
-      ['🍒', '🍓', '🥥'],
-      ['🍇', '🍇', '🍇'],
-      ['🥝', '🍊', '🍊']
-    ]
-
-    expect(Bejeweled.checkForMatches(grid)).to.be.true;
+  describe('Bejeweled.checkForMatches(grid)', function () {
+    it('should find matches horizontally of 3 or more', function(){
+      let grid = [
+        ['🍒', '🍋', '🥥'],
+        ['🥝', '🍋', '🍒'],
+        ['🍒', '🍓', '🥥'],
+        ['🍇', '🍇', '🍇'],
+        ['🥝', '🍊', '🍊']
+      ]
+  
+      expect(Bejeweled.checkForMatches(grid)).to.be.deep.equal([{row: 3, start: 0, end: 2, symbol: '🍇'}]);
+    })
+  
+    it('should find matches vertically of 3 or more', function (){
+      let grid = [
+        ['🍒', '🍋', '🥥'],
+        ['🥥', '🍋', '🍒'],
+        ['🥝', '🍓', '🥥'],
+        ['🥝', '🍊', '🍇'],
+        ['🥝', '🍇', '🍊']
+      ]
+  
+      expect(Bejeweled.checkForMatches(grid)).to.be.deep.equal([{col: 0, start: 2, end: 4, symbol: '🥝'}]);
+    })
   })
 
-  it('should find matches vertically of 3 or more', function (){
-    let grid = [
-      ['🍒', '🍋', '🥥'],
-      ['🥥', '🍋', '🍒'],
-      ['🥝', '🍓', '🥥'],
-      ['🥝', '🍊', '🍇'],
-      ['🥝', '🍇', '🍊']
-    ]
+  describe('Bejeweled.swap(grid, selection)', function (){
+    let grid;
+    beforeEach(function() {
+      grid = [
+        ['🍒', '🍋', '🥥'],
+        ['🥝', '🍋', '🍒'],
+        ['🍒', '🍓', '🥥'],
+        ['🥝', '🍊', '🍇'],
+        ['🥝', '🍇', '🍊']
+      ]
+    })
 
-    expect(Bejeweled.checkForMatches(grid)).to.be.true;
-  })
-  it('should find and clear matches after a swap', function (){
-    let grid = [
-      ['🍒', '🍋', '🥥'],
-      ['🥝', '🍋', '🍒'],
-      ['🥝', '🍓', '🥥'],
-      ['🍇', '🍊', '🍇'],
-      ['🥝', '🍇', '🍊']
-    ]
+    it('should swap pieces when provided a grid and selection in the form of [{row: col:}, {row:,col:}]', function (){
+      Bejeweled.swap(grid, [{row:1, col: 0}, {row: 2, col: 0}]);
+      expect(grid).to.be.deep.equal([
+        ['🍒', '🍋', '🥥'],
+        ['🍒', '🍋', '🍒'],
+        ['🥝', '🍓', '🥥'],
+        ['🥝', '🍊', '🍇'],
+        ['🥝', '🍇', '🍊']
+      ])
+    })
 
-    Bejeweled.swap({row: 4, col: 0}, {row: 3, col: 0})
-    expect(grid[4][0]).to.equal('🍇');
-    expect(grid[3][0]).to.equal('🍒');
-  })
-
-  // Add tests for swaps that set up combos
-  it('should match combos', function (){
-    let grid = [
-      ['🍒', '🍋', '🥥'],
-      ['🥝', '🍋', '🍒'],
-      ['🥝', '🍓', '🥥'],
-      ['🍇', '🍊', '🍇'],
-      ['🥝', '🍇', '🍊']
-    ]
-
-    Bejeweled.swap({row:3, col: 1}, {row: 4, col: 1});
-
-    expect(grid[4][0]).to.equal('🍒');
-    expect(grid[3][1]).to.equal('🍓');
+    it('should not swap if it does not make a match', function() {
+      Bejeweled.swap(grid, [{row:1, col: 0}, {row: 1, col: 1}]);
+      expect(grid).to.be.deep.equal([
+        ['🍒', '🍋', '🥥'],
+        ['🥝', '🍋', '🍒'],
+        ['🍒', '🍓', '🥥'],
+        ['🥝', '🍊', '🍇'],
+        ['🥝', '🍇', '🍊']
+      ])
+    })
 
   })
+
+  describe('Bejeweled.swapAndClear(grid, selection)', function(){
+
+    it('should find and clear matches after a swap', function (){
+      let grid = [
+        ['🍒', '🍋', '🥥'],
+        ['🥝', '🍋', '🍒'],
+        ['🥝', '🍓', '🥥'],
+        ['🍇', '🍊', '🍇'],
+        ['🥝', '🍇', '🍊']
+      ]
+  
+      Bejeweled.swapAndClear(grid, [{row: 4, col: 0}, {row: 3, col: 0}])
+      expect(grid[4][0]).to.equal('🍇');
+      expect(grid[3][0]).to.equal('🍒');
+    })
+  
+    // Add tests for swapAndClears that set up combos
+    it('should match combos', function (){
+      let grid = [
+        ['🍒', '🍋', '🥥'],
+        ['🥝', '🍋', '🍒'],
+        ['🥝', '🍓', '🥥'],
+        ['🍇', '🍊', '🍇'],
+        ['🥝', '🍇', '🍊']
+      ]
+  
+      Bejeweled.swapAndClear(grid, [{row:3, col: 1}, {row: 4, col: 1}]);
+  
+      expect(grid[4][0]).to.equal('🍒');
+      expect(grid[3][1]).to.equal('🍓');
+  
+    })
+
+  })
+
+ 
 
   // Add tests to check if there are no possible valid moves
   it('should detect if there are no validMoves', function(){

@@ -57,21 +57,3 @@
 let test = 0;
 let testRes = test !== 0;
 // console.log(testRes);
-
-function _checkRowForThree(row) {
-
-    for (let col = 0; col < row.length; col++) {
-        const symbol = row[col];
-        let threeSlice = row.slice(col, col + 3);
-        console.log(threeSlice)
-        if(threeSlice.length === 1){
-            return false;
-        }
-        if (threeSlice.every( value => value === symbol)) {
-        return col;
-        }
-    }
-}
-
-debugger
-console.log(_checkRowForThree([2,4,1,3,3,1,1,1]))
