@@ -40,7 +40,7 @@ describe ('Bejeweled', function () {
   })
 
 
-  describe('Bejeweled.shift(grid)', function () {
+  describe('Bejeweled.refill(grid)', function () {
 
     let grid;
     beforeEach(function() {
@@ -53,9 +53,9 @@ describe ('Bejeweled', function () {
       ]
     })
 
-    it('Bejeweled.shift() should move pieces down to fill blank squares', function (){
+    it('Bejeweled.refill() should move pieces down to fill blank squares', function (){
 
-      Bejeweled.shift(grid);
+      Bejeweled.refill(grid);
       expect(grid[4]).to.be.deep.equal(['🍒','🍊','🍊']);
       expect(grid[3]).to.include('🍓').and.include('🍇');
       expect(grid[2]).to.include('🍋').and.include('🍒');
@@ -63,7 +63,7 @@ describe ('Bejeweled', function () {
     })
 
     it('should fill blanks', function () {
-      Bejeweled.shift(grid);
+      Bejeweled.refill(grid);
 
       function findBlank (grid) {
         for(let row = 0; row < grid.length; row++) {
@@ -81,8 +81,9 @@ describe ('Bejeweled', function () {
     })
 
     it('should not have any matches after filling', function(){
-      Bejeweled.shift(grid);
-      expect(checkForMatches(grid)).to.be.false;
+      Bejeweled.refill(grid);
+      console.log(grid)
+      expect(Bejeweled.checkForMatches(grid)).to.be.false;
     })
   })
 
@@ -167,22 +168,33 @@ describe ('Bejeweled', function () {
     // Add tests for swapAndClears that set up combos
     it('should match combos', function (){
       let grid = [
+        ['🥥', '🍓', '🍇'],
         ['🍒', '🍋', '🥥'],
         ['🥝', '🍋', '🍒'],
         ['🥝', '🍓', '🥥'],
         ['🍇', '🍊', '🍇'],
         ['🥝', '🍇', '🍊']
       ]
+
+      Bejeweled.swapAndClear(grid, [{row:4, col: 1}, {row: 5, col: 1}]);
   
-      Bejeweled.swapAndClear(grid, [{row:3, col: 1}, {row: 4, col: 1}]);
-  
-      expect(grid[4][0]).to.equal('🍒');
-      expect(grid[3][1]).to.equal('🍓');
+      expect(grid[5][0]).to.equal('🍒');
+      expect(grid[4][1]).to.equal('🍓');
   
     })
 
-    it('should call the Bejeweled.shift() method to fill in the board', function () {
-      const spy = spy.on(Bejeweled, shift);
+    it('should call the Bejeweled.refill() method to fill in the board', function () {
+
+      let grid = [
+        ['🍒', '🍋', '🥥'],
+        ['🥝', '🍋', '🍒'],
+        ['🥝', '🍓', '🥥'],
+        ['🍇', '🍊', '🍇'],
+        ['🥝', '🍇', '🍊']
+      ]
+
+      const spy = chai.spy(Bejeweled.refill);
+      Bejeweled.swapAndClear(grid, [{row:3, col: 1}, {row: 4, col: 1}]);
       expect(spy).to.be.called;
     })
 

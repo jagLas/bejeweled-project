@@ -4,7 +4,7 @@ const Cursor = require("./cursor");
 class Bejeweled {
 
   constructor() {
-
+    
     this.playerTurn = "O";
 
     // Initialize this
@@ -18,6 +18,8 @@ class Bejeweled {
     this.cursor.setBackgroundColor();
     Screen.render();
   }
+
+  static validSymbols = ['🍋' , '🥝', '🍓', '🥥', '🍇', '🍊', '🍒'];
 
   static checkForMatches(grid) {
     const matches = [];
@@ -69,6 +71,36 @@ class Bejeweled {
     return VerticalMatches;
   }
 
+  static swapAndClear(grid, selection){
+    this.swap(grid, selection);
+
+    let matches = this.checkForMatches(grid);
+
+    matches.forEach(match => {
+      this.clear(grid, match);
+    })
+
+    this.refill(grid);
+  }
+
+  static clear(grid, section) {
+    let keys = Object.keys(section);
+
+    //clears vertical matches
+    if (keys.includes('col')) {
+      for (let row = section.start; row <= section.end; row++){
+        grid[row][section.col] = ' ';
+      }
+    }
+
+    //clears horizontal matches
+    if (keys.includes('row')){
+      for (let col = section.start; col <= section.end; col++){
+        grid[section.row][col] = ' ';
+      }
+    }
+  }
+
   static swap(grid, selection) {
     let selection1 = selection[0];
     let selection2 = selection[1];
@@ -85,8 +117,52 @@ class Bejeweled {
       grid[selection1.row][selection1.col] = selection1.symbol;
       grid[selection2.row][selection2.col] = selection2.symbol;
     }
+  }
+
+  static refill(grid){
+
+    let rotatedGrid = this.rotateGrid(grid);
+    rotatedGrid.forEach(col =>{
+      this.refillRow(col);
+    })
+
+    rotatedGrid = this.rotateGrid(rotatedGrid);
+
+    //mutates the original grid to match the filled one
+    for (let i = 0; i < rotatedGrid.length; i++){
+      grid.shift();
+      grid.push(rotatedGrid[i])
+    }
+
+    //check if there is another match
+    let matches = this.checkForMatches(grid)
+
+    if(matches){
+      matches.forEach(match => {
+        this.clear(grid, match);
+        this.refill(grid);
+      })
+    }
+  }
+
+  static refillRow(col) {
+    const originalLength = col.length
+
+    while(col.includes(' ')) {
+      col.forEach((symbol, index) => {
+        if(symbol === ' ') {
+          col.splice(index, 1);
+        }
+      })
+    }
+
+    while(col.length < originalLength) {
+      let randomSymbol = this.validSymbols[Math.floor(Math.random() * this.validSymbols.length)];
+      col.unshift(randomSymbol)
+    }
 
   }
+
 
   //could refactor below for a check four to see if a swap is legal
   // static _checkRowForThree(row) {
@@ -178,9 +254,62 @@ let grid3 = [
   ['🥝', '🍇', '🍊']
 ]
 
-debugger
-// Bejeweled.swap(grid3, [{row:1, col: 0}, {row: 1, col: 1}]);
+let grid4 = [
+  ['🍋', '🍒', '🍋'],
+  ['🥝', '🍋', '🍒'],
+  ['🍒', '🍓', '🥥'],
+  ['🍇','🍊' , '🍇'],
+  ['🥝', '🍇', '🍊']
+]
+
+let grid5 = [
+  [ '🍒', '🍋', '🥥' ],
+  [ '🍒', '🍋', '🍒' ],
+  [ ' ', '🍓', '🥥' ],
+  [ ' ', '🍊', '🍇' ],
+  [ ' ', '🍇', '🍊' ]
+]
+
+let grid6 = [
+  [ '🍋', '🍒', '🍋' ],
+  [ '🥝', '🍋', '🍒' ],
+  [ '🍒', '🍓', '🥥' ],
+  [ ' ', ' ', ' ' ],
+  [ '🥝', '🍊', '🍊' ]
+]
+
+let grid7 = [
+  ['🍒', '🍋', '🥥'],
+  ['🥝', '🍋', '🍒'],
+  ['🥝', '🍓', '🥥'],
+  ['🍇', '🍊', '🍇'],
+  ['🥝', '🍇', '🍊']
+]
+
+// console.log(grid7)
+
+// Bejeweled.swapAndClear(grid7, [{row: 3, col: 1}, {row: 4, col: 1}])
+// console.log(grid7)
+// console.log(Bejeweled.refill(grid5));
+// Bejeweled.refill(grid6);
+// console.log(grid5)
+// console.log(grid6)
+// Bejeweled.swapAndClear(grid3, [{row:1, col: 0}, {row: 2, col: 0}]);
 // console.log(grid3)
+
+
+// Bejeweled.swapAndClear(grid4, [{row: 4, col: 1}, {row: 3, col: 1}])
+// console.log(grid4)
+
+
+
+// Bejeweled.clear(grid2, { start: 2, end: 4, symbol: '🥝', col: 0 });
+// console.log(grid2);
+
+
+// Bejeweled.clear(grid, { start: 0, end: 2, symbol: '🥝', row: 3 });
+// console.log(grid);
+
 // console.log(Bejeweled.checkForMatches(grid));
 // console.log(Bejeweled.checkForMatches(grid2));
 // console.log(['🍇', '🍇', '🍇','🍊', '🍊', '🍊','🍊', '🍒'].indexOf('🍊', '🍊', '🍊', '🍊'))
