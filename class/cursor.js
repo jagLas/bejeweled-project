@@ -12,9 +12,9 @@ class Cursor {
     this.gridColor = 'black';
     this.cursorColor = 'yellow';
 
-    this.selection1 = null;
-    this.selection2 = null;
+    this.resetSelections();
 
+    this.resetLimits();
   }
 
   resetBackgroundColor() {
@@ -25,8 +25,20 @@ class Cursor {
     Screen.setBackgroundColor(this.row, this.col, this.cursorColor);
   }
 
+  resetSelections() {
+    this.selection1 = null;
+    this.selection2 = null;
+  }
+  resetLimits() {
+    this.upLimit = 0;
+    this.downLimit = this.numRows - 1;
+    this.leftLimit = 0;
+    this.rightLimit = this.numCols - 1;
+  }
+
+  //needs to change movement based on if selection is null or not
   up() {
-    if (this.row > 0) {
+    if (this.row > this.upLimit) {
       this.resetBackgroundColor();
       this.row -= 1;
       this.setBackgroundColor();
@@ -35,7 +47,7 @@ class Cursor {
   }
 
   down() {
-    if (this.row < this.numRows - 1 ) {
+    if (this.row < this.downLimit) {
       this.resetBackgroundColor();
       this.row += 1;    
       this.setBackgroundColor();
@@ -44,7 +56,7 @@ class Cursor {
   }
 
   left() {
-    if (this.col > 0) {
+    if (this.col > this.leftLimit) {
       this.resetBackgroundColor();
       this.col -= 1;
       this.setBackgroundColor();
@@ -53,7 +65,7 @@ class Cursor {
   }
 
   right() {
-    if (this.col < this.numCols - 1) {
+    if (this.col < this.rightLimit) {
       this.resetBackgroundColor();
       this.col += 1;
       this.setBackgroundColor();
@@ -62,21 +74,46 @@ class Cursor {
   }
 
   select() {
+    //checks if selection1 has already been made
     if (this.selection1 === null) {
+      //stores first selection
       this.selection1 = {};
       this.selection1.row = this.row;
       this.selection1.col = this.col;
 
-    } else if(false) {
+      //currently has bug where diagonals are possible.
+      //redefines cursor limits to prevent selection of space further than one away
+      if (this.row > this.upLimit) {
+        this.upLimit = this.row - 1;
+      }
+
+      if (this.row < this.downLimit) {
+        this.downLimit = this.row + 1;
+      }
+
+      if (this.col < this.rightLimit) {
+        this.rightLimit = this.col + 1;
+      }
+
+      if (this.col > this.leftLimit) {
+        this.leftLimit = this.col - 1;
+      }
 
     } else {
+      //stores second selection
       this.selection2 = {};
       this.selection2.row = this.row;
       this.selection2.col = this.col;
+
+      this.resetLimits();
+
+      const selections = [this.selection1, this.selection2]
+      this.resetSelections();
+
+      return selections; //returns an array of spaces to swap
     }
-
-
   }
+
 }
 
 // cursor = new Cursor(3, 3);
