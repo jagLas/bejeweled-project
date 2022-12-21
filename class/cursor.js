@@ -81,8 +81,7 @@ class Cursor {
       this.selection1.row = this.row;
       this.selection1.col = this.col;
 
-      //currently has bug where diagonals are possible.
-      //redefines cursor limits to prevent selection of space further than one away
+      //redefines cursor limits to prevent selection of space further than one away in each direction
       if (this.row > this.upLimit) {
         this.upLimit = this.row - 1;
       }
@@ -99,15 +98,15 @@ class Cursor {
         this.leftLimit = this.col - 1;
       }
 
-    } else if(this._diagonalCheck()) { //checks if second selection is a diagonal
+    } else if(this._diagonalCheck()) { //checks if second selection is a orthogonal
+      //sets selection2 if true
       this.selection2 = {};
       this.selection2.row = this.row;
       this.selection2.col = this.col;
 
-      this.resetLimits();
-
-      const selections = [this.selection1, this.selection2]
-      this.resetSelections();
+      this.resetLimits(); //resets cursor limits to defaults
+      const selections = [this.selection1, this.selection2] //forms array to return
+      this.resetSelections(); //clears both selections
 
       return selections; //returns an array of spaces to swap
     }
