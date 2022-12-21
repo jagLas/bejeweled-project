@@ -28,7 +28,7 @@ describe ('Bejeweled', function () {
 
     it('should not have any matches on creation', function () {
       let grid = Bejeweled.makeGrid(8, 8);
-      let matches = Bejeweled.findMatches(grid);
+      let matches = Bejeweled.checkForMatches(grid);
       expect(matches).to.be.false;
     })
 
@@ -79,7 +79,7 @@ describe ('Bejeweled', function () {
 
 
   // Add tests for a valid swap that matches 3
-  it('should find matches horizontally of 3', function(){
+  it('should find matches horizontally of 3 or more', function(){
     let grid = [
       ['🍒', '🍋', '🥥'],
       ['🥝', '🍋', '🍒'],
@@ -88,13 +88,10 @@ describe ('Bejeweled', function () {
       ['🥝', '🍊', '🍊']
     ]
 
-    Bejeweled.findMatches(grid);
-    expect(grid[3][0]).to.not.equal('🍇');
-    expect(grid[3][1]).to.not.equal('🍇');
-    expect(grid[3][2]).to.not.equal('🍇');
+    expect(Bejeweled.checkForMatches(grid)).to.be.true;
   })
 
-  it('should find matches vertically of 3', function (){
+  it('should find matches vertically of 3 or more', function (){
     let grid = [
       ['🍒', '🍋', '🥥'],
       ['🥥', '🍋', '🍒'],
@@ -103,11 +100,9 @@ describe ('Bejeweled', function () {
       ['🥝', '🍇', '🍊']
     ]
 
-    Bejeweled.findMatches(grid);
-    expect(grid[3][0]).to.not.equal('🥝');
-    expect(grid[4][0]).to.not.equal('🥝');
+    expect(Bejeweled.checkForMatches(grid)).to.be.true;
   })
-  it('should find matches after a swap', function (){
+  it('should find and clear matches after a swap', function (){
     let grid = [
       ['🍒', '🍋', '🥥'],
       ['🥝', '🍋', '🍒'],

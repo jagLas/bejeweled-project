@@ -74,7 +74,7 @@ describe('Criteria for cursor to select spaces for swaps', function (){
     cursor = new Cursor(8,8);
   })
 
-  it('should have properties for selection1 and selection2 set to empty object', function (){
+  it('should have properties for selection1 and selection2 set to null', function (){
     
     expect(cursor.selection1).to.be.null;
     expect(cursor.selection1).to.be.null;
