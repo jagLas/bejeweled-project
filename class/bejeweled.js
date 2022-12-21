@@ -8,7 +8,7 @@ class Bejeweled {
     this.playerTurn = "O";
 
     // Initialize this
-    this.grid = [];
+    this.grid = this.makeGrid();
 
     this.cursor = new Cursor(8, 8);
 
@@ -17,9 +17,28 @@ class Bejeweled {
 
     this.cursor.setBackgroundColor();
     Screen.render();
+
   }
 
   static validSymbols = ['🍋' , '🥝', '🍓', '🥥', '🍇', '🍊', '🍒'];
+  static getRandomSymbol(){
+    return this.validSymbols[Math.floor(Math.random() * this.validSymbols.length)];
+  }
+
+  static makeGrid(){
+    const gameGrid = [];
+    for (let row = 0; row < 8; row++) {
+      const newRow = [];
+      for (let col = 0; col < 8; col++) {
+        newRow.push(this.getRandomSymbol());
+      }
+      gameGrid.push(newRow);
+    }
+
+    Bejeweled.refill(gameGrid);
+
+    return gameGrid;
+  }
 
   static checkForMatches(grid) {
     const matches = [];
@@ -33,8 +52,9 @@ class Bejeweled {
       return false;
     }
     
-
   }
+
+
 
   static checkForHorizontalMatches(grid) {
     //finds horizontal matches and puts in an array
@@ -164,24 +184,39 @@ class Bejeweled {
   }
 
 
-  //could refactor below for a check four to see if a swap is legal
-  // static _checkRowForThree(row) {
-  //   //returns the starting column for a match of three in a row
-  //   for (let col = 0; col < row.length; col++) {
+  static checkForMoves(grid){
+    const rotatedGrid = this.rotateGrid(grid);
+    console.log(grid)
+    console.log(rotatedGrid)
+    //checks for horizontal valid moves
+    for (let row = 0; row < grid.length; row++){
+      if(this._checkRowForFour(grid[row]) || this._checkRowForFour(rotatedGrid[row])){
+        return true;
+      };
+    }
 
-  //     const symbol = row[col];
-  //     let threeSlice = row.slice(col, col + 3);
+    return false;
+
+  }
+
+  //could refactor below for a check four to see if a swap is legal
+  static _checkRowForFour(row) {
+    //returns the starting column for a match of three in a row
+    for (let col = 0; col < row.length; col++) {
+
+      const symbol = row[col];
+      let fourSlice = row.slice(col, col + 4);
       
-  //     //stops it from false positive when it gets to second to last row
-  //     if(threeSlice.length === 2){
-  //         return false;
-  //     }
-  //     //returns the col number when three in a row found
-  //     if (threeSlice.every( value => value === symbol)) {
-  //     return col;
-  //     }
-  //   }
-  // }
+      //stops it from false positive when it gets to second to last row
+      if(fourSlice.length === 3){
+          return false;
+      }
+      //returns the col number when three in a row found
+      if (fourSlice.every( value => value === symbol)) {
+      return true;
+      }
+    }
+  }
 
   static breakRows (row) {
     let subRows = [];
@@ -285,40 +320,5 @@ let grid7 = [
   ['🍇', '🍊', '🍇'],
   ['🥝', '🍇', '🍊']
 ]
-
-// console.log(grid7)
-
-// Bejeweled.swapAndClear(grid7, [{row: 3, col: 1}, {row: 4, col: 1}])
-// console.log(grid7)
-// console.log(Bejeweled.refill(grid5));
-// Bejeweled.refill(grid6);
-// console.log(grid5)
-// console.log(grid6)
-// Bejeweled.swapAndClear(grid3, [{row:1, col: 0}, {row: 2, col: 0}]);
-// console.log(grid3)
-
-
-// Bejeweled.swapAndClear(grid4, [{row: 4, col: 1}, {row: 3, col: 1}])
-// console.log(grid4)
-
-
-
-// Bejeweled.clear(grid2, { start: 2, end: 4, symbol: '🥝', col: 0 });
-// console.log(grid2);
-
-
-// Bejeweled.clear(grid, { start: 0, end: 2, symbol: '🥝', row: 3 });
-// console.log(grid);
-
-// console.log(Bejeweled.checkForMatches(grid));
-// console.log(Bejeweled.checkForMatches(grid2));
-// console.log(['🍇', '🍇', '🍇','🍊', '🍊', '🍊','🍊', '🍒'].indexOf('🍊', '🍊', '🍊', '🍊'))
-// console.log(Bejeweled.breakRows(['🍇', '🍇', '🍇','🍊', '🍊', '🍊','🍊', '🍒']))
-// console.log(Bejeweled.breakRows(['🍇', '🍇', '🍒','🍊', '🍒', '🍊','🍊', '🍒']))
-
-// console.log(Bejeweled.checkForHorizontalMatches(grid));
-// console.log(grid)
-// console.log(Bejeweled.checkForVerticalMatches(grid2));
-// console.log(grid2)
 
 module.exports = Bejeweled;

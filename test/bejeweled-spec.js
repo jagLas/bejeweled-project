@@ -82,7 +82,7 @@ describe ('Bejeweled', function () {
 
     it('should not have any matches after filling', function(){
       Bejeweled.refill(grid);
-      console.log(grid)
+
       expect(Bejeweled.checkForMatches(grid)).to.be.false;
     })
   })
@@ -208,16 +208,13 @@ describe ('Bejeweled', function () {
       ['🍒', '🍋', '🥥'],
       ['🥝', '🍋', '🍒'],
       ['🍇', '🍓', '🥥'],
-      ['🥥', '🍊', '🍇'],
-      ['🥝', '🍇', '🍊']
     ]
 
+    debugger
     let validMove = Bejeweled.checkForMoves(grid);
     expect(validMove).to.be.false;
 
     grid = [
-      ['🍒', '🍋', '🥥'],
-      ['🥝', '🍋', '🍒'],
       ['🥝', '🍓', '🥥'],
       ['🍇', '🍊', '🍇'],
       ['🥝', '🍇', '🍊']
