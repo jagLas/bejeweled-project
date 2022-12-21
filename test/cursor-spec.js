@@ -82,13 +82,48 @@ describe ('Cursor', function () {
       expect([cursor.selection2.row, cursor.selection2.col]).to.deep.equal([0, 1]);
     })
 
-    it('should not set a second selection if more than one space away', function (){
+    it('should not move more than 1 away from initial selection', function (){
+      cursor = new Cursor(8, 8);
+
+      cursor.row = 2;
+      cursor.col = 2;
       cursor.select();
       cursor.right();
       cursor.right();
-      expect([cursor.selection1.row, selection1.col]).to.equal([0,0]);
-      expect([cursor.selection2.row, selection2.col]).to.equal([null, null]);
-    })
+      cursor.left();
+      expect([cursor.row, cursor.col]).to.deep.equal([2, 2]);
+
+      cursor = new Cursor(8, 8);
+
+      cursor.row = 2;
+      cursor.col = 2;
+      cursor.select();
+      cursor.left();
+      cursor.left();
+      cursor.right();
+      expect([cursor.row, cursor.col]).to.deep.equal([2, 2]);
+
+      cursor = new Cursor(8, 8);
+
+      cursor.row = 2;
+      cursor.col = 2;
+      cursor.select();
+      cursor.up();
+      cursor.up();
+      cursor.down();
+      expect([cursor.row, cursor.col]).to.deep.equal([2, 2]);
+
+      cursor = new Cursor(8, 8);
+
+      cursor.row = 2;
+      cursor.col = 2;
+      cursor.select();
+      cursor.down();
+      cursor.down();
+      cursor.up();
+      expect([cursor.row, cursor.col]).to.deep.equal([2, 2]);
+
+      })
 
   })
 
