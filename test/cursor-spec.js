@@ -156,5 +156,15 @@ describe('Criteria for cursor to select spaces for swaps', function (){
       expect(cursor.row).to.be.equal(4);
     })
 
+    it('should not accept diagonal selections', function() {
+      cursor.row = 2;
+      cursor.col = 2;
+      cursor.select();
+      cursor.up();
+      cursor.right();
+      cursor.select();
+      expect(cursor.selection1).to.be.exist;
+      expect(cursor.selection2).to.be.null;
+    })
 })
 

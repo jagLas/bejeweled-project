@@ -99,8 +99,7 @@ class Cursor {
         this.leftLimit = this.col - 1;
       }
 
-    } else {
-      //stores second selection
+    } else if(this._diagonalCheck()) { //checks if second selection is a diagonal
       this.selection2 = {};
       this.selection2.row = this.row;
       this.selection2.col = this.col;
@@ -112,7 +111,32 @@ class Cursor {
 
       return selections; //returns an array of spaces to swap
     }
+    
   }
+
+  _diagonalCheck() {
+    //returns true if selection is orthogonal to selection1
+    //return false if selection is on a diagonal or equal to selection1
+    let horizontalMove = this.row !== this.selection1.row;
+    let verticalMove = this.col !== this.selection1.col;
+    return this._exclusiveOR(horizontalMove, verticalMove)
+  }
+
+  _exclusiveOR(a, b) {
+    //evaluates if a and b are exclusively true
+    if (typeof a !== 'boolean' || typeof b !== 'boolean') {
+        throw new TypeError('inputs must be booleans')
+    }
+    if (a && b) {
+        return false;
+    } else if (a && !b) {
+        return true;
+    } else if (!a && b) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 }
 
