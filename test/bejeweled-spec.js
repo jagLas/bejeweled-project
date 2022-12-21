@@ -1,6 +1,11 @@
 const { expect } = require('chai');
 const { checkForMatches } = require('../class/bejeweled.js');
 
+const chai = require('chai')
+spies = require('chai-spies');
+
+chai.use(spies);
+
 const Bejeweled = require("../class/bejeweled.js");
 
 const symbols = ['🍋' , '🥝', '🍓', '🥥', '🍇', '🍊', '🍒'];
@@ -174,6 +179,11 @@ describe ('Bejeweled', function () {
       expect(grid[4][0]).to.equal('🍒');
       expect(grid[3][1]).to.equal('🍓');
   
+    })
+
+    it('should call the Bejeweled.shift() method to fill in the board', function () {
+      const spy = spy.on(Bejeweled, shift);
+      expect(spy).to.be.called;
     })
 
   })
