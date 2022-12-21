@@ -105,7 +105,7 @@ class Cursor {
       this.selection2.col = this.col;
 
       this.resetLimits(); //resets cursor limits to defaults
-      const selections = [this.selection1, this.selection2] //forms array to return
+      const selections = [this.selection1, this.selection2] //forms array to return before clearing
       this.resetSelections(); //clears both selections
 
       return selections; //returns an array of spaces to swap
