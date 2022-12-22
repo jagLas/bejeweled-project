@@ -57,6 +57,12 @@ class Bejeweled {
     let totalScore = Math.round(Bejeweled.matches * (Bejeweled.combos * .25 + 1));
     Screen.setMessage(`Matches: ${Bejeweled.matches} Combos: ${Bejeweled.combos} Total Score: ${totalScore}`)
     Screen.render();
+
+    //quits if no moves available on board
+    // if (!Bejeweled.checkForMoves(Screen.grid)) {
+    //   Screen.setQuitMessage(`Game Over:\nMatches: ${Bejeweled.matches} Combos: ${Bejeweled.combos} Total Score: ${totalScore}`)
+    //   Screen.quit();
+    // }
   }
 
   //available 'gems' for the game

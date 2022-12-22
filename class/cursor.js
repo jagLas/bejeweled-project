@@ -39,7 +39,13 @@ class Cursor {
   //needs to change movement based on if selection is null or not
   up() {
     if (this.row > this.upLimit) {
-      this.resetBackgroundColor();
+      if(this.selection1){
+        if(!(this.col === this.selection1.col && this.row === this.selection1.row)){
+          this.resetBackgroundColor();
+        }
+      } else{
+        this.resetBackgroundColor();
+      }
       this.row -= 1;
       this.setBackgroundColor();
       Screen.render();
@@ -48,7 +54,13 @@ class Cursor {
 
   down() {
     if (this.row < this.downLimit) {
-      this.resetBackgroundColor();
+      if(this.selection1){
+        if(!(this.col === this.selection1.col && this.row === this.selection1.row)){
+          this.resetBackgroundColor();
+        }
+      } else{
+        this.resetBackgroundColor();
+      }
       this.row += 1;    
       this.setBackgroundColor();
       Screen.render();
@@ -57,7 +69,13 @@ class Cursor {
 
   left() {
     if (this.col > this.leftLimit) {
-      this.resetBackgroundColor();
+      if(this.selection1){
+        if(!(this.col === this.selection1.col && this.row === this.selection1.row)){
+          this.resetBackgroundColor();
+        }
+      } else{
+        this.resetBackgroundColor();
+      }
       this.col -= 1;
       this.setBackgroundColor();
       Screen.render()
@@ -66,7 +84,13 @@ class Cursor {
 
   right() {
     if (this.col < this.rightLimit) {
-      this.resetBackgroundColor();
+      if(this.selection1){
+        if(!(this.col === this.selection1.col && this.row === this.selection1.row)){
+          this.resetBackgroundColor();
+        }
+      } else{
+        this.resetBackgroundColor();
+      }
       this.col += 1;
       this.setBackgroundColor();
       Screen.render();
@@ -80,6 +104,8 @@ class Cursor {
       this.selection1 = {};
       this.selection1.row = this.row;
       this.selection1.col = this.col;
+      this.cursorColor = 'blue'
+      Screen.setBackgroundColor(this.row, this.col, this.cursorColor)
 
       //redefines cursor limits to prevent selection of space further than one away in each direction
       if (this.row > this.upLimit) {
@@ -105,6 +131,8 @@ class Cursor {
       this.selection2.col = this.col;
 
       this.resetLimits(); //resets cursor limits to defaults
+      this.cursorColor = 'yellow'
+      Screen.setBackgroundColor(this.selection1.row, this.selection1.col, 'black')
       const selections = [this.selection1, this.selection2] //forms array to return before clearing
       this.resetSelections(); //clears both selections
 
