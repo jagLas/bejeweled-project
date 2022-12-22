@@ -24,12 +24,13 @@ class Bejeweled {
     Screen.addCommand('space', 'selects piece for swap', Bejeweled.selectCommand.bind(this));
 
     this.cursor.setBackgroundColor();
+    Screen.setMessage(`Matches: ${Bejeweled.matches} Combos: ${Bejeweled.combos}`)
     Screen.render();
 
   }
 
   static matches = 0;
-
+  static totalScore = 0;
   static combos = 0;
 
   //commands
@@ -54,15 +55,17 @@ class Bejeweled {
     if(selections) {
       Bejeweled.swapAndClear(Screen.grid, selections);
     }
-    let totalScore = Math.round(Bejeweled.matches * (Bejeweled.combos * .25 + 1));
-    Screen.setMessage(`Matches: ${Bejeweled.matches} Combos: ${Bejeweled.combos} Total Score: ${totalScore}`)
+    Bejeweled.totalScore = Math.round(Bejeweled.matches * (Bejeweled.combos * .25 + 1));
+    // quits if no moves available on board. Has erratic bug
+    if (!Bejeweled.checkForMoves(Screen.grid)) {
+      Screen.setQuitMessage(`Game Over:\nMatches: ${Bejeweled.matches} Combos: ${Bejeweled.combos} Total Score: ${Bejeweled.totalScore}`)
+      Screen.quit();
+    }
+
+    Bejeweled.totalScore = Math.round(Bejeweled.matches * (Bejeweled.combos * .25 + 1));
+    Screen.setMessage(`Matches: ${Bejeweled.matches} Combos: ${Bejeweled.combos} Total Score: ${Bejeweled.totalScore}`)
     Screen.render();
 
-    //quits if no moves available on board
-    // if (!Bejeweled.checkForMoves(Screen.grid)) {
-    //   Screen.setQuitMessage(`Game Over:\nMatches: ${Bejeweled.matches} Combos: ${Bejeweled.combos} Total Score: ${totalScore}`)
-    //   Screen.quit();
-    // }
   }
 
   //available 'gems' for the game
@@ -89,7 +92,7 @@ class Bejeweled {
 
     Bejeweled.matches = 0;
     Bejeweled.combos = 0;
-    Screen.setMessage(`Matches; ${Bejeweled.matches} Combos: ${Bejeweled.combos}`)
+
     return gameGrid;
   }
 
@@ -244,6 +247,8 @@ class Bejeweled {
         this.refill(grid);
       })
     }
+
+
   }
 
   //refills each col
@@ -265,14 +270,27 @@ class Bejeweled {
     }
   }
 
-  static checkForMoves(grid){
+  static makeCopy(grid) {
+    const gridCopy = [];
+    grid.forEach(row => {
+      const rowCopy = [];
+      row.forEach(el => {
+        rowCopy.push(el);
+      })
+      gridCopy.push(rowCopy);
+    })
+    return gridCopy;
+  }
 
+  static checkForMoves(grid){
+    
+    const gridCopy = this.makeCopy(grid);
     //checks all rows
-    for (let row = 0; row < grid.length; row++) {
+    for (let row = 0; row < gridCopy.length; row++) {
       //in each column except the last
-      for (let col = 0; col < grid[0].length - 1; col++) {
+      for (let col = 0; col < gridCopy[0].length - 1; col++) {
         //binds the function to swap for the current space and the one to its right
-        let test = this.swap.bind(this, grid, [{row: row, col: col}, {row: row, col: col + 1}]);
+        let test = this.swap.bind(Bejeweled, gridCopy, [{row: row, col: col}, {row: row, col: col + 1}]);
         if(test()){ //swaps and returns true if valid
           test(); //swaps them back
           return true; //returns true
@@ -281,11 +299,11 @@ class Bejeweled {
     }
 
     //checks all columns
-    for (let col = 0; col < grid[0].length; col++) {
+    for (let col = 0; col < gridCopy[0].length; col++) {
       //in each row except the last
-      for (let row = 0; row < grid.length - 1; row++) {
+      for (let row = 0; row < gridCopy.length - 1; row++) {
         //binds the function to swap the current space with the one below it
-        let test = this.swap.bind(this, grid, [{row: row, col: col}, {row: row + 1, col: col}]);
+        let test = this.swap.bind(Bejeweled, gridCopy, [{row: row, col: col}, {row: row + 1, col: col}]);
         if(test()) { //swaps and returns true if valid
           test(); //swaps them back
           return true; //returns true
