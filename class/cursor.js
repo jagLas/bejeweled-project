@@ -39,7 +39,7 @@ class Cursor {
   //needs to change movement based on if selection is null or not
   up() {
     if (this.row > this.upLimit) {
-      this.resetBackgroundColor();
+      this.selectionColorCheck();
       this.row -= 1;
       this.setBackgroundColor();
       Screen.render();
@@ -48,7 +48,7 @@ class Cursor {
 
   down() {
     if (this.row < this.downLimit) {
-      this.resetBackgroundColor();
+      this.selectionColorCheck();
       this.row += 1;    
       this.setBackgroundColor();
       Screen.render();
@@ -57,7 +57,7 @@ class Cursor {
 
   left() {
     if (this.col > this.leftLimit) {
-      this.resetBackgroundColor();
+      this.selectionColorCheck();
       this.col -= 1;
       this.setBackgroundColor();
       Screen.render()
@@ -66,10 +66,20 @@ class Cursor {
 
   right() {
     if (this.col < this.rightLimit) {
-      this.resetBackgroundColor();
+      this.selectionColorCheck()
       this.col += 1;
       this.setBackgroundColor();
       Screen.render();
+    }
+  }
+
+  selectionColorCheck() {
+    if(this.selection1){
+      if(!(this.col === this.selection1.col && this.row === this.selection1.row)){
+        this.resetBackgroundColor();
+      }
+    } else{
+      this.resetBackgroundColor();
     }
   }
 
@@ -80,6 +90,10 @@ class Cursor {
       this.selection1 = {};
       this.selection1.row = this.row;
       this.selection1.col = this.col;
+
+      //changes the cursor to blue to show selection
+      this.cursorColor = 'blue'
+      Screen.setBackgroundColor(this.row, this.col, this.cursorColor)
 
       //redefines cursor limits to prevent selection of space further than one away in each direction
       if (this.row > this.upLimit) {
@@ -105,9 +119,16 @@ class Cursor {
       this.selection2.col = this.col;
 
       this.resetLimits(); //resets cursor limits to defaults
-      const selections = [this.selection1, this.selection2] //forms array to return before clearing
+
+      //resets cursor color to yellow
+      this.cursorColor = 'yellow';
+      //resets color of selection square
+      Screen.setBackgroundColor(this.selection1.row, this.selection1.col, 'black');
+      const selections = [this.selection1, this.selection2]; //forms array to return before clearing
       this.resetSelections(); //clears both selections
 
+      //resets current position to yellow
+      this.setBackgroundColor(this.row, this.col, this.cursorColor);
       return selections; //returns an array of spaces to swap
     }
     
@@ -138,18 +159,5 @@ class Cursor {
 }
 
 }
-
-// cursor = new Cursor(3, 3);
-// debugger
-// cursor.select();
-// console.log(cursor.selection1)
-
-// cursor.right();
-// console.log(cursor)
-// cursor.select();
-
-// console.log(cursor.selection2)
-
-
 
 module.exports = Cursor;
