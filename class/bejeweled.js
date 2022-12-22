@@ -8,16 +8,55 @@ class Bejeweled {
     this.playerTurn = "O";
 
     // Initialize this
-    this.grid = this.makeGrid();
+    this.grid = Bejeweled.makeGrid();
 
     this.cursor = new Cursor(8, 8);
+    this.matches = 0;
 
     Screen.initialize(8, 8);
+    Screen.grid = this.grid;
     Screen.setGridlines(false);
+
+    Screen.addCommand('up', 'moves cursor up', Bejeweled.upCommand.bind(this));
+    Screen.addCommand('down', 'moves cursor down', Bejeweled.downCommand.bind(this));
+    Screen.addCommand('left', 'moves cursor left', Bejeweled.leftCommand.bind(this));
+    Screen.addCommand('right', 'moves cursor right', Bejeweled.rightCommand.bind(this));
+    Screen.addCommand('space', 'selects piece for swap', Bejeweled.selectCommand.bind(this));
 
     this.cursor.setBackgroundColor();
     Screen.render();
 
+  }
+
+  static matches = 0;
+
+  static combos = 0;
+
+  //commands
+  static upCommand(){
+    this.cursor.up();
+  }
+
+  static leftCommand() {
+    this.cursor.left();
+  }
+
+  static rightCommand() {
+    this.cursor.right();
+  }
+
+  static downCommand() {
+    this.cursor.down();
+  }
+
+  static selectCommand() {
+    let selections = this.cursor.select();
+    if(selections) {
+      Bejeweled.swapAndClear(Screen.grid, selections);
+    }
+    let totalScore = Math.round(Bejeweled.matches * (Bejeweled.combos * .25 + 1));
+    Screen.setMessage(`Matches: ${Bejeweled.matches} Combos: ${Bejeweled.combos} Total Score: ${totalScore}`)
+    Screen.render();
   }
 
   //available 'gems' for the game
@@ -42,6 +81,9 @@ class Bejeweled {
     //calls refill to clear any matches and refill
     Bejeweled.refill(gameGrid);
 
+    Bejeweled.matches = 0;
+    Bejeweled.combos = 0;
+    Screen.setMessage(`Matches; ${Bejeweled.matches} Combos: ${Bejeweled.combos}`)
     return gameGrid;
   }
 
@@ -108,10 +150,16 @@ class Bejeweled {
 
     let matches = this.checkForMatches(grid);
 
-    matches.forEach(match => {
+    if (matches){
+      if(matches.length > 1) {
+        Bejeweled.combos += 1;
+      }
 
-      this.clear(grid, match);
-    })
+      matches.forEach(match => {
+        this.clear(grid, match);
+      })
+    }
+
 
     this.refill(grid);
   }
@@ -124,6 +172,7 @@ class Bejeweled {
       for (let row = section.start; row <= section.end; row++){
         grid[row][section.col] = ' ';
       }
+      Bejeweled.matches += 1;
     }
 
     //clears horizontal matches
@@ -131,7 +180,10 @@ class Bejeweled {
       for (let col = section.start; col <= section.end; col++){
         grid[section.row][col] = ' ';
       }
+      Bejeweled.matches += 1;
     }
+
+    
   }
 
   //swaps position of two gems. selection must be in the form of [{row: a, col:b}, {row: c, col: d}]
@@ -181,6 +233,7 @@ class Bejeweled {
     //if a match is found, will clear the match and recurse
     if(matches){
       matches.forEach(match => {
+        Bejeweled.combos += 1;
         this.clear(grid, match);
         this.refill(grid);
       })
