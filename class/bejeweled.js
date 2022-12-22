@@ -74,19 +74,20 @@ class Bejeweled {
   static checkForVerticalMatches(grid) {
     grid = this.rotateGrid(grid);
     //finds Vertical matches and puts in an array
-    const VerticalMatches = [];
+    const verticalMatches = [];
     grid.forEach((col, colNum) => {
+      debugger
+      const verticalMatch = this.breakRows(col);
+      // console.log(verticalMatch)
+     
+      verticalMatch.forEach(match => match.col = colNum)
 
-      const VerticalMatch = this.breakRows(col);
-
-      VerticalMatch.forEach(match => match.col = colNum)
-
-      if(VerticalMatch.length > 0){
-        VerticalMatches.push(...VerticalMatch);
+      if(verticalMatch.length > 0){
+        verticalMatches.push(...verticalMatch);
       }
     })
 
-    return VerticalMatches;
+    return verticalMatches;
   }
 
   static swapAndClear(grid, selection){
@@ -95,6 +96,7 @@ class Bejeweled {
     let matches = this.checkForMatches(grid);
 
     matches.forEach(match => {
+      // console.log(match)
       this.clear(grid, match);
     })
 
@@ -102,11 +104,18 @@ class Bejeweled {
   }
 
   static clear(grid, section) {
+    // console.log(grid)
+    // console.log('clearing')
+    // console.log(section)
     let keys = Object.keys(section);
 
     //clears vertical matches
     if (keys.includes('col')) {
       for (let row = section.start; row <= section.end; row++){
+        // console.log(grid)
+        // console.log(row)
+        // console.log(section.col)
+        // console.log(grid[row][section.col])
         grid[row][section.col] = ' ';
       }
     }
@@ -117,6 +126,7 @@ class Bejeweled {
         grid[section.row][col] = ' ';
       }
     }
+    // console.log(grid);
   }
 
   static swap(grid, selection) {
@@ -152,8 +162,11 @@ class Bejeweled {
       grid.push(rotatedGrid[i])
     }
 
+    // console.log('refilled')
+    // console.log(grid)
+
     //check if there is another match
-    let matches = this.checkForMatches(grid)
+    let matches = this.checkForMatches(grid);
 
     if(matches){
       matches.forEach(match => {
@@ -183,48 +196,43 @@ class Bejeweled {
 
   static checkForMoves(grid){
 
+    //checks all rows
     for (let row = 0; row < grid.length; row++) {
-      for (let col = 0; col < grid[0].length; col++) {
-
+      //in each column except the last
+      for (let col = 0; col < grid[0].length - 1; col++) {
+        //binds the function to swap for the current space and the one to its right
+        let test = this.swap.bind(this, grid, [{row: row, col: col}, {row: row, col: col + 1}]);
+        if(test()){ //swaps and returns true if valid
+          test(); //swaps them back
+          return true; //returns true
+        }
       }
     }
+
+    //checks all columns
+    for (let col = 0; col < grid[0].length; col++) {
+      //in each row except the last
+      for (let row = 0; row < grid.length - 1; row++) {
+        //binds the function to swap the current space with the one below it
+        let test = this.swap.bind(this, grid, [{row: row, col: col}, {row: row + 1, col: col}]);
+        if(test()) { //swaps and returns true if valid
+          test(); //swaps them back
+          return true; //returns true
+        }
+      }
+    }
+
+    return false;
   }
 
-  // static checkForMoves(grid){
-  //   const rotatedGrid = this.rotateGrid(grid);
-  //   console.log(grid)
-  //   console.log(rotatedGrid)
-  //   //checks for horizontal valid moves
-  //   for (let row = 0; row < grid.length; row++){
-  //     if(this._checkRowForFour(grid[row]) || this._checkRowForFour(rotatedGrid[row])){
-  //       return true;
-  //     };
-  //   }
-
-  //   return false;
-
-  // }
-
-  // //could refactor below for a check four to see if a swap is legal
-  // static _checkRowForFour(row) {
-  //   //returns the starting column for a match of three in a row
-  //   for (let col = 0; col < row.length; col++) {
-
-  //     const symbol = row[col];
-  //     let fourSlice = row.slice(col, col + 4);
-      
-  //     //stops it from false positive when it gets to second to last row
-  //     if(fourSlice.length === 3){
-  //         return false;
-  //     }
-  //     //returns the col number when three in a row found
-  //     if (fourSlice.every( value => value === symbol)) {
-  //     return true;
-  //     }
-  //   }
-  // }
-
   static breakRows (row) {
+
+    function equalArray(a, b) {
+      return a.every((el,index) => {
+        return el === b[index];
+      });
+    }
+
     let subRows = [];
     let subRow = [];
 
@@ -241,10 +249,24 @@ class Bejeweled {
       }
     }
 
+    // console.log(subRows)
     const matches = subRows.filter(subRow => subRow.length >= 3)
-    const info = matches.map(subRow => {
-      const start = row.indexOf(...subRow)
-      return {start: start, end: start + subRow.length - 1, symbol: subRow[0]};
+    // console.log(matches)
+
+    const info = matches.map(match => {
+      let start;
+      let matchLength = match.length
+      for (let i = 0; i < row.length - 2; i++){
+        let testArray = [];
+        for  (let j = i; j < matchLength + i; j++) {
+          testArray.push(row[j]);
+        }
+        // console.log(testArray)
+        if (equalArray(testArray, match)){
+          start = i;
+          return {start: start, end: start + matchLength - 1, symbol: match[0]};
+        }
+      }
     })
 
     return info;
@@ -272,11 +294,10 @@ class Bejeweled {
 
 
 let grid = [
-  ['🍋', '🍒', '🍋'],
-  ['🥝', '🍋', '🍒'],
-  ['🍒', '🍓', '🥥'],
-  ['🍇', '🍇', '🍇'],
-  ['🥝', '🍊', '🍊']
+  ['🍊', '🥝', '🍊',  '🍊'],
+  ['🍋', '🍒', '🍋', '🥝'],
+  ['🥝', '🍋', '🍒', '🍒'],
+  ['🍒', '🍓', '🥥', '🍊'],
 ]
 
 let grid2 = [
@@ -289,10 +310,10 @@ let grid2 = [
 
 let grid3 = [
   ['🍒', '🍋', '🥥'],
-  ['🥝', '🍋', '🍒'],
-  ['🍒', '🍓', '🥥'],
-  ['🥝', '🍊', '🍇'],
-  ['🥝', '🍇', '🍊']
+  ['🍋', '🍒', '🥝'],
+  ['🍓', '🥥', '🥝'],
+  ['🍒', '🍊', '🍇'],
+  ['🍇', '🍊', '🥝']
 ]
 
 let grid4 = [
@@ -326,5 +347,21 @@ let grid7 = [
   ['🍇', '🍊', '🍇'],
   ['🥝', '🍇', '🍊']
 ]
+
+let grid8 = [
+  [ '🥝', '🍊', '🍇' ],
+  [ '🥥', '🍓', '🍇' ],
+  [ '🍒', '🍋', '🥥' ],
+  [ '🥝', '🍋', '🍒' ],
+  [ '🥝', '🍓', '🥥' ],
+  [ '🥝', '🍊', '🍊' ]
+]
+// console.log(grid8)
+// Bejeweled.refill(grid8)
+// console.log(grid8)
+
+// console.log(grid3)
+// console.log(Bejeweled.checkForMoves(grid3));
+// console.log(grid3)
 
 module.exports = Bejeweled;

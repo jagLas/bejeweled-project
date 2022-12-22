@@ -176,9 +176,8 @@ describe ('Bejeweled', function () {
         ['🍇', '🍊', '🍇'],
         ['🥝', '🍇', '🍊']
       ]
-      debugger
+
       Bejeweled.swapAndClear(grid, [{row:4, col: 1}, {row: 5, col: 1}]);
-  
       expect(grid[5][0]).to.equal('🍒');
       expect(grid[4][1]).to.equal('🍓');
   
