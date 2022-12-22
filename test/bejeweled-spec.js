@@ -45,6 +45,7 @@ describe ('Bejeweled', function () {
     let grid;
     beforeEach(function() {
       grid = [
+        ['🥝','🥥','🥝'],
         ['🍒', '🍋', '🥥'],
         [' ', '🍋', '🍒'],
         [' ', '🍓', ' '],
@@ -56,10 +57,10 @@ describe ('Bejeweled', function () {
     it('Bejeweled.refill() should move pieces down to fill blank squares', function (){
 
       Bejeweled.refill(grid);
-      expect(grid[4]).to.be.deep.equal(['🍒','🍊','🍊']);
-      expect(grid[3]).to.include('🍓').and.include('🍇');
-      expect(grid[2]).to.include('🍋').and.include('🍒');
-      expect(grid[1]).to.include('🍋').and.include('🥥');
+      expect(grid[5]).to.be.deep.equal(['🍒','🍊','🍊']);
+      expect(grid[4]).to.include('🍓').and.include('🍇');
+      expect(grid[3]).to.include('🍋').and.include('🍒');
+      expect(grid[2]).to.include('🍋').and.include('🥥');
     })
 
     it('should fill blanks', function () {
@@ -175,7 +176,7 @@ describe ('Bejeweled', function () {
         ['🍇', '🍊', '🍇'],
         ['🥝', '🍇', '🍊']
       ]
-
+      debugger
       Bejeweled.swapAndClear(grid, [{row:4, col: 1}, {row: 5, col: 1}]);
   
       expect(grid[5][0]).to.equal('🍒');
@@ -210,7 +211,7 @@ describe ('Bejeweled', function () {
       ['🍇', '🍓', '🥥'],
     ]
 
-    debugger
+
     let validMove = Bejeweled.checkForMoves(grid);
     expect(validMove).to.be.false;
 

@@ -54,8 +54,6 @@ class Bejeweled {
     
   }
 
-
-
   static checkForHorizontalMatches(grid) {
     //finds horizontal matches and puts in an array
     const horizontalMatches = [];
@@ -132,7 +130,7 @@ class Bejeweled {
     grid[selection2.row][selection2.col] = selection1.symbol;
 
     if(this.checkForMatches(grid)) {
-      return;
+      return true;
     } else {
       grid[selection1.row][selection1.col] = selection1.symbol;
       grid[selection2.row][selection2.col] = selection2.symbol;
@@ -183,40 +181,48 @@ class Bejeweled {
 
   }
 
-
   static checkForMoves(grid){
-    const rotatedGrid = this.rotateGrid(grid);
-    console.log(grid)
-    console.log(rotatedGrid)
-    //checks for horizontal valid moves
-    for (let row = 0; row < grid.length; row++){
-      if(this._checkRowForFour(grid[row]) || this._checkRowForFour(rotatedGrid[row])){
-        return true;
-      };
+
+    for (let row = 0; row < grid.length; row++) {
+      for (let col = 0; col < grid[0].length; col++) {
+
+      }
     }
-
-    return false;
-
   }
 
-  //could refactor below for a check four to see if a swap is legal
-  static _checkRowForFour(row) {
-    //returns the starting column for a match of three in a row
-    for (let col = 0; col < row.length; col++) {
+  // static checkForMoves(grid){
+  //   const rotatedGrid = this.rotateGrid(grid);
+  //   console.log(grid)
+  //   console.log(rotatedGrid)
+  //   //checks for horizontal valid moves
+  //   for (let row = 0; row < grid.length; row++){
+  //     if(this._checkRowForFour(grid[row]) || this._checkRowForFour(rotatedGrid[row])){
+  //       return true;
+  //     };
+  //   }
 
-      const symbol = row[col];
-      let fourSlice = row.slice(col, col + 4);
+  //   return false;
+
+  // }
+
+  // //could refactor below for a check four to see if a swap is legal
+  // static _checkRowForFour(row) {
+  //   //returns the starting column for a match of three in a row
+  //   for (let col = 0; col < row.length; col++) {
+
+  //     const symbol = row[col];
+  //     let fourSlice = row.slice(col, col + 4);
       
-      //stops it from false positive when it gets to second to last row
-      if(fourSlice.length === 3){
-          return false;
-      }
-      //returns the col number when three in a row found
-      if (fourSlice.every( value => value === symbol)) {
-      return true;
-      }
-    }
-  }
+  //     //stops it from false positive when it gets to second to last row
+  //     if(fourSlice.length === 3){
+  //         return false;
+  //     }
+  //     //returns the col number when three in a row found
+  //     if (fourSlice.every( value => value === symbol)) {
+  //     return true;
+  //     }
+  //   }
+  // }
 
   static breakRows (row) {
     let subRows = [];
